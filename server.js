@@ -8,7 +8,7 @@ dotenv.config();
 connectDB();
 
 const app = express();
-const port = 5000;
+const PORT = process.env.PORT || 5000;
 
 
 
@@ -20,5 +20,5 @@ app.post('/auth/register', postUser);
 app.get('/auth/:userId', getUser)
 
 app.listen(port, () => {
-    console.log(`Server listening on ${port}`);
+    console.log(`Server listening on ${PORT}`);
 });
