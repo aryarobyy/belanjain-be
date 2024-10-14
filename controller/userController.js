@@ -1,5 +1,4 @@
-import mongoose from "mongoose";
-import User from "../models/userModel.js";
+import User from "../models/userModel.js"
 import bcrypt from "bcryptjs";
 import jwtToken from "../utils/jwtToken.js";
 import { v4 as uuidv4 } from "uuid";
