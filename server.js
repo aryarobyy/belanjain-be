@@ -19,6 +19,6 @@ app.post('/auth/register', postUser);
 
 app.get('/auth/:userId', getUser)
 
-app.listen(port, () => {
+app.listen(PORT, () => {
     console.log(`Server listening on ${PORT}`);
 });
