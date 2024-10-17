@@ -26,18 +26,51 @@ export const postUser = async (req, res) => {
         const token = jwtToken(newUser.userId);
         
         res.status(201).json({
-            "Messages" : "User berhasil di post",
+            "Messages" : "Success posting user",
             token,
             newUser
         });
 
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-        console.log("Error in postUser: ", err.message);
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+        console.log("Error in postUser: ", e.message);
     }
 };
 
-export const getUser = async (req, res) => {
+export const getUserByUsername = async (req, res) => {
+    const { username } = req.params;
+
+    try{
+        const user = await User.findOne({ username })
+
+        if (!user ) {
+            return res.status(404).json({
+                "Messages" : "User not found",
+            })
+        } 
+
+        const token = jwtToken(user.username);
+
+        if (!token) {
+            return res.status(401).json({
+                "Messages" : "Token tidak valid",
+                })
+        }
+
+        return res.status(200).json({
+            message: "user found",
+            user,
+            token
+        })
+    } catch (e) {
+        return res.status(500).json({
+            message: "An error occurred",
+            error: e.message
+        });
+    }
+}
+
+export const getUserById = async (req, res) => {
     const { userId } = req.body;
 
     try{
@@ -56,10 +89,10 @@ export const getUser = async (req, res) => {
             user,
             token
         })
-    }catch (error) {
+    } catch (e) {
         return res.status(500).json({
             message: "An error occurred",
-            error: error.message
+            error: e.message
         });
     }
 }
