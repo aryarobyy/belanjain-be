@@ -19,7 +19,7 @@ app.use(cors());
 app.post('/auth/register', postUser); 
 app.post('/image/post', postProduct); 
 
-app.get('/auth/:username', getUserByUsername)
+app.post('/auth/login', getUserByUsername);
 app.get('/auth/:userId', getUserById); 
 
 const server = app.listen(PORT, '0.0.0.0', () => {

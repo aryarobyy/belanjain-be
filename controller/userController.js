@@ -38,10 +38,11 @@ export const postUser = async (req, res) => {
 };
 
 export const getUserByUsername = async (req, res) => {
-    const { username } = req.params;
+    const { username,  password } = req.body;
+    console.log("Searching for user with username:", username);
 
     try{
-        const user = await User.findOne({ username })
+        const user = await User.findOne({ username: { $regex: new RegExp("^" + username.toLowerCase(), "i") } });
 
         if (!user ) {
             return res.status(404).json({
@@ -49,19 +50,25 @@ export const getUserByUsername = async (req, res) => {
             })
         } 
 
-        const token = jwtToken(user.username);
-
-        if (!token) {
+        const isValid = await bcrypt.compare(password, user.password);
+        if (!isValid){
             return res.status(401).json({
-                "Messages" : "Token tidak valid",
+                "Messages" : "Invalid password",
                 })
         }
 
+        const token = jwtToken(user.userId);
+
         return res.status(200).json({
-            message: "user found",
-            user,
-            token
-        })
+            message: "User logged in successfully",
+            user: {
+              username: user.username,
+              name: user.name,
+              email: user.email,
+              role: user.role,
+            },
+            token,
+        });
     } catch (e) {
         return res.status(500).json({
             message: "An error occurred",
@@ -71,7 +78,7 @@ export const getUserByUsername = async (req, res) => {
 }
 
 export const getUserById = async (req, res) => {
-    const { userId } = req.body;
+    const { userId, password } = req.body;
 
     try{
         const user = await User.findOne({ userId })
@@ -80,6 +87,12 @@ export const getUserById = async (req, res) => {
             return res.status(404).json({
                 message: "User not found"
             });
+        }
+        const isValid = await bcrypt.compare(password, user.password);
+        if (!isValid){
+            return res.status(401).json({
+                "Messages" : "Invalid password",
+                })
         }
 
         const { token } = jwtToken(user.userId);
